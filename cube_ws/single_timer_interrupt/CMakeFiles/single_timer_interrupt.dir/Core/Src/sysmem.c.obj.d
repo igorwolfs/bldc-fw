@@ -1,5 +1,5 @@
 CMakeFiles/single_timer_interrupt.dir/Core/Src/sysmem.c.obj: \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/Core/Src/sysmem.c \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/sysmem.c \
  /usr/include/newlib/errno.h /usr/include/newlib/sys/errno.h \
  /usr/include/newlib/sys/reent.h /usr/include/newlib/_ansi.h \
  /usr/include/newlib/newlib.h /usr/include/newlib/_newlib_version.h \

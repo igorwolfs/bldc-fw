@@ -1,4 +1,4 @@
-# Install script for directory: /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx
+# Install script for directory: /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

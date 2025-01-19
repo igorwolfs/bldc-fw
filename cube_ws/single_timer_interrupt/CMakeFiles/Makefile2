@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt
+CMAKE_SOURCE_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt
+CMAKE_BINARY_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -98,14 +98,14 @@ cmake/stm32cubemx/clean:
 CMakeFiles/single_timer_interrupt.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34 "Built target single_timer_interrupt"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34 "Built target single_timer_interrupt"
 .PHONY : CMakeFiles/single_timer_interrupt.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/single_timer_interrupt.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/CMakeFiles 34
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/CMakeFiles 34
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/single_timer_interrupt.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/CMakeFiles 0
 .PHONY : CMakeFiles/single_timer_interrupt.dir/rule
 
 # Convenience name for target.

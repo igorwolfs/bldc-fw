@@ -1,5 +1,5 @@
 CMakeFiles/single_timer_interrupt.dir/Core/Src/syscalls.c.obj: \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/Core/Src/syscalls.c \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/syscalls.c \
  /usr/include/newlib/sys/stat.h /usr/include/newlib/_ansi.h \
  /usr/include/newlib/newlib.h /usr/include/newlib/_newlib_version.h \
  /usr/include/newlib/sys/config.h /usr/include/newlib/machine/ieeefp.h \

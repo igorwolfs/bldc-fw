@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt
+CMAKE_SOURCE_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt
+CMAKE_BINARY_DIR = /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/CMakeFiles /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx//CMakeFiles/progress.marks
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt/CMakeFiles 0
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/CMakeFiles /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx//CMakeFiles/progress.marks
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/clean
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,17 +103,17 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/preinstall
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/preinstall
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cmake/stm32cubemx/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Help Target
@@ -135,6 +135,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
