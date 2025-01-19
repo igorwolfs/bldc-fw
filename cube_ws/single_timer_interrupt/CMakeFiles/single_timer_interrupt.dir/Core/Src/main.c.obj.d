@@ -49,4 +49,7 @@ CMakeFiles/single_timer_interrupt.dir/Core/Src/main.c.obj: \
  /usr/include/newlib/stdlib.h /usr/include/newlib/machine/stdlib.h \
  /usr/include/newlib/alloca.h /usr/include/newlib/string.h \
  /usr/include/newlib/sys/_locale.h /usr/include/newlib/strings.h \
- /usr/include/newlib/sys/string.h
+ /usr/include/newlib/sys/string.h \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/inverter_control.h \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/main.h \
+ /usr/lib/gcc/arm-none-eabi/13.2.1/include/stdbool.h

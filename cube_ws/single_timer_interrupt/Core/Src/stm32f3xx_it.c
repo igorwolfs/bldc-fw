@@ -230,43 +230,8 @@ void USB_LP_CAN_RX0_IRQHandler(void)
 void TIM8_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
-  
-  period_counter %= 6;
-  switch(period_counter) 
-  {
-    case (0):
-      HAL_GPIO_WritePin(GPIO_PORT_U_SW, GPIO_PIN_U_SW, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_W_SW, GPIO_PIN_W_SW, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);
-      break;
-    case (1):
-      HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);
-      break;
-    case (2):
-      HAL_GPIO_WritePin(GPIO_PORT_V_SW, GPIO_PIN_V_SW, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_U_SW, GPIO_PIN_U_SW, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);
-      break;
-    case (3):
-      HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);
-      break;
-    case (4):
-      HAL_GPIO_WritePin(GPIO_PORT_W_SW, GPIO_PIN_W_SW, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_V_SW, GPIO_PIN_V_SW, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);
-      break;
-    case (5):
-      HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);
-      break;
-  }
-  period_counter++;
-  
+  // regular_switching_cycle();
+  test_switching_cycle();
   /* USER CODE END TIM8_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim8);
   /* USER CODE BEGIN TIM8_UP_IRQn 1 */

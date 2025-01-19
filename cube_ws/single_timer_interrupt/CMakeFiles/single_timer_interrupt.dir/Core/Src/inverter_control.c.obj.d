@@ -1,5 +1,6 @@
-CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_it.c.obj: \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/stm32f3xx_it.c \
+CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj: \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/inverter_control.c \
+ /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/inverter_control.h \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/main.h \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/stm32f3xx_hal_conf.h \
@@ -34,7 +35,4 @@ CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_it.c.obj: \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_pwr_ex.h \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim.h \
  /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/stm32f3xx_it.h \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/inverter_control.h \
- /home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/cmake/stm32cubemx/../../Core/Inc/main.h \
  /usr/lib/gcc/arm-none-eabi/13.2.1/include/stdbool.h

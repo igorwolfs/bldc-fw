@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj"
+  "CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj.d"
   "CMakeFiles/single_timer_interrupt.dir/Core/Src/main.c.obj"
   "CMakeFiles/single_timer_interrupt.dir/Core/Src/main.c.obj.d"
   "CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_hal_msp.c.obj"

@@ -129,6 +129,30 @@ single_timer_interrupt/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/build
 .PHONY : single_timer_interrupt/fast
 
+Core/Src/inverter_control.obj: Core/Src/inverter_control.c.obj
+.PHONY : Core/Src/inverter_control.obj
+
+# target to build an object file
+Core/Src/inverter_control.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj
+.PHONY : Core/Src/inverter_control.c.obj
+
+Core/Src/inverter_control.i: Core/Src/inverter_control.c.i
+.PHONY : Core/Src/inverter_control.i
+
+# target to preprocess a source file
+Core/Src/inverter_control.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.i
+.PHONY : Core/Src/inverter_control.c.i
+
+Core/Src/inverter_control.s: Core/Src/inverter_control.c.s
+.PHONY : Core/Src/inverter_control.s
+
+# target to generate assembly for a file
+Core/Src/inverter_control.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/single_timer_interrupt.dir/build.make CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.s
+.PHONY : Core/Src/inverter_control.c.s
+
 Core/Src/main.obj: Core/Src/main.c.obj
 .PHONY : Core/Src/main.obj
 
@@ -914,6 +938,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... single_timer_interrupt"
+	@echo "... Core/Src/inverter_control.obj"
+	@echo "... Core/Src/inverter_control.i"
+	@echo "... Core/Src/inverter_control.s"
 	@echo "... Core/Src/main.obj"
 	@echo "... Core/Src/main.i"
 	@echo "... Core/Src/main.s"

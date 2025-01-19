@@ -35,6 +35,7 @@ set(CMAKE_ASM_TARGET_INCLUDE_PATH
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/inverter_control.c" "CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj" "gcc" "CMakeFiles/single_timer_interrupt.dir/Core/Src/inverter_control.c.obj.d"
   "/home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/main.c" "CMakeFiles/single_timer_interrupt.dir/Core/Src/main.c.obj" "gcc" "CMakeFiles/single_timer_interrupt.dir/Core/Src/main.c.obj.d"
   "/home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/stm32f3xx_hal_msp.c" "CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_hal_msp.c.obj" "gcc" "CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_hal_msp.c.obj.d"
   "/home/iwolfs/Documents/personal/projects/bldc_project/bldc-fw/cube_ws/single_timer_interrupt/Core/Src/stm32f3xx_it.c" "CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_it.c.obj" "gcc" "CMakeFiles/single_timer_interrupt.dir/Core/Src/stm32f3xx_it.c.obj.d"

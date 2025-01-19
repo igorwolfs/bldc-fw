@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "inverter_control.h"
 
 /* USER CODE END Includes */
 
@@ -93,38 +94,44 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
-  for (int i=0; i<6; i++)
+
+
+  for (int i=0; i<2; i++)
   {
     printf("BLINK\r\n");
-    HAL_Delay(1000);
+    HAL_Delay(2000);
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   }
-  
   HAL_TIM_Base_Start_IT(&htim8);
-  int i=1000;
+  
+  phase_t phase_u = {
+    .sw_gpio_pin = GPIO_PIN_U_SW, 
+    .sw_gpio_port = GPIO_PORT_U_SW, 
+    .nsd_gpio_pin = GPIO_PIN_U_NSD,
+    .nsd_gpio_port = GPIO_PORT_U_NSD
+  };
+  bool toggle_value = false;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_Delay(10000);
+    // THERE'S A PROBLEM WITH THIS FUNCTION
+
+    printf(".");
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-  
+    HAL_Delay(250);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
     HAL_TIM_Base_DeInit(&htim8);
-    htim8.Init.Period = i;
+    htim8.Init.Period = 64000;
     // Make the counter count up to less than 65535 in order to trigger it more quickly
     if (HAL_TIM_Base_Init(&htim8) != HAL_OK)
     {
+      printf("<\r\n");
       Error_Handler();
-    }
-    i += 1000;
-    if (i > 64000)
-    {
-      i %= 64000;
     }
   }
   /* USER CODE END 3 */
