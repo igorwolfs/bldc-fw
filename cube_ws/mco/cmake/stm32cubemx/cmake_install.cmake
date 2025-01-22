@@ -1,4 +1,4 @@
-# Install script for directory: /home/iwolfs/Documents/personal/projects/bldc_project/bldc/rev_1/fw/cube_ws/mco/cmake/stm32cubemx
+# Install script for directory: /home/iwolfs/Work/Projects/bldc_project/bldc-fw/cube_ws/mco/cmake/stm32cubemx
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -32,7 +32,7 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "TRUE")
 endif()
 
-# Set path to fallback-tool for dependency-resolution.
+# Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/usr/bin/arm-none-eabi-objdump")
 endif()

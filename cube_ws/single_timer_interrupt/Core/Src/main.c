@@ -58,7 +58,27 @@ static void MX_TIM8_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+// TRY TO SWITCH A SINGLE PHASE AND SEE WHAT HAPPENS
+static phase_t phase_u = {
+    .sw_gpio_pin = GPIO_PIN_U_SW, 
+    .sw_gpio_port = GPIO_PORT_U_SW, 
+    .nsd_gpio_pin = GPIO_PIN_U_NSD,
+    .nsd_gpio_port = GPIO_PORT_U_NSD
+};
 
+static phase_t phase_v = {
+    .sw_gpio_pin = GPIO_PIN_V_SW, 
+    .sw_gpio_port = GPIO_PORT_V_SW, 
+    .nsd_gpio_pin = GPIO_PIN_V_NSD,
+    .nsd_gpio_port = GPIO_PORT_V_NSD
+};
+
+static phase_t phase_w = {
+    .sw_gpio_pin = GPIO_PIN_W_SW, 
+    .sw_gpio_port = GPIO_PORT_W_SW, 
+    .nsd_gpio_pin = GPIO_PIN_W_NSD,
+    .nsd_gpio_port = GPIO_PORT_W_NSD
+};
 /* USER CODE END 0 */
 
 /**
@@ -103,14 +123,7 @@ int main(void)
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   }
   HAL_TIM_Base_Start_IT(&htim8);
-  
-  phase_t phase_u = {
-    .sw_gpio_pin = GPIO_PIN_U_SW, 
-    .sw_gpio_port = GPIO_PORT_U_SW, 
-    .nsd_gpio_pin = GPIO_PIN_U_NSD,
-    .nsd_gpio_port = GPIO_PORT_U_NSD
-  };
-  bool toggle_value = false;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

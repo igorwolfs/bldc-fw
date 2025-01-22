@@ -1,27 +1,6 @@
 #include "inverter_control.h"
 
 
-static phase_t phase_u = {
-    .sw_gpio_pin = GPIO_PIN_U_SW, 
-    .sw_gpio_port = GPIO_PORT_U_SW, 
-    .nsd_gpio_pin = GPIO_PIN_U_NSD,
-    .nsd_gpio_port = GPIO_PORT_U_NSD
-};
-
-static phase_t phase_v = {
-    .sw_gpio_pin = GPIO_PIN_V_SW, 
-    .sw_gpio_port = GPIO_PORT_V_SW, 
-    .nsd_gpio_pin = GPIO_PIN_V_NSD,
-    .nsd_gpio_port = GPIO_PORT_V_NSD
-};
-
-static phase_t phase_w = {
-    .sw_gpio_pin = GPIO_PIN_W_SW, 
-    .sw_gpio_port = GPIO_PORT_W_SW, 
-    .nsd_gpio_pin = GPIO_PIN_W_NSD,
-    .nsd_gpio_port = GPIO_PORT_W_NSD
-};
-
 void phase_set(phase_t* phase, bool high)
 {
     HAL_GPIO_WritePin(phase->sw_gpio_port, phase->sw_gpio_pin, (int)high);
@@ -42,8 +21,10 @@ void regular_switching_cycle(void)
     switch(period_counter) 
     {
     case (0):
+        // SW U OFF
         HAL_GPIO_WritePin(GPIO_PORT_U_SW, GPIO_PIN_U_SW, GPIO_PIN_SET);
         HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
+        // SW W OFF
         HAL_GPIO_WritePin(GPIO_PORT_W_SW, GPIO_PIN_W_SW, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);
         break;
@@ -84,7 +65,7 @@ void regular_switching_cycle(void)
 
 
 
-void test_switching_cycle(void)
+void test_switching_cycle(phase_t phase_u, phase_t phase_v, phase_t phase_w)
 {
     printf(">");
     static period_counter = 0;
