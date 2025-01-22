@@ -1,59 +1,72 @@
 #include "inverter_control.h"
+#include <stdio.h>
+// *************** PHASES ********************
 
-
-void phase_set(phase_t* phase, bool high)
+void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
 {
-    HAL_GPIO_WritePin(phase->sw_gpio_port, phase->sw_gpio_pin, (int)high);
-    HAL_GPIO_WritePin(phase->nsd_gpio_port, phase->nsd_gpio_pin, GPIO_PIN_SET);
+    switch (state)
+    {
+        case (PHASE_LOW):
+        case (PHASE_HIGH):
+            HAL_GPIO_WritePin(inv->phases[phase]->sw_gpio_port, inv->phases[phase]->sw_gpio_pin, (int)state);
+            HAL_GPIO_WritePin(inv->phases[phase]->nsd_gpio_port, inv->phases[phase]->nsd_gpio_pin, GPIO_PIN_SET);
+            break;
+        case (PHASE_OFF):
+           HAL_GPIO_WritePin(inv->phases[phase]->nsd_gpio_port, inv->phases[phase]->nsd_gpio_pin, GPIO_PIN_RESET);
+            break;
+    }
 }
 
-void phase_unset(phase_t* phase)
+// *************** INVERTER ********************
+
+int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count)
 {
-    HAL_GPIO_WritePin(phase->nsd_gpio_port, phase->nsd_gpio_pin, GPIO_PIN_RESET);
+    // u, v, w -> 0, 1, 2
+    for (int ph_i=0; ph_i<phase_count; ph_i++)
+    {
+        if (phase_ptr[ph_i] == NULL)
+        {
+            return -1;
+        }
+        inv->phases[ph_i] = phase_ptr[ph_i];
+        inverter_phase_set(inv, ph_i, PHASE_OFF);
+    }
+    return 0;
 }
 
 
-void regular_switching_cycle(void)
+void inverter_switch(inverter_t *inv)
 {
     printf(">");
-    static period_counter = 0;
-    period_counter %= 6;
-    switch(period_counter) 
+    inv->state %= 6;
+    switch(inv->state) 
     {
     case (0):
-        // SW U OFF
-        HAL_GPIO_WritePin(GPIO_PORT_U_SW, GPIO_PIN_U_SW, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-        // SW W OFF
-        HAL_GPIO_WritePin(GPIO_PORT_W_SW, GPIO_PIN_W_SW, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 0, PHASE_HIGH);
+        inverter_phase_set(inv, 2, PHASE_OFF);
         break;
     case (1):
-        HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 2, PHASE_LOW);
+        inverter_phase_set(inv, 1, PHASE_OFF);
         break;
     case (2):
-        HAL_GPIO_WritePin(GPIO_PORT_V_SW, GPIO_PIN_V_SW, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_U_SW, GPIO_PIN_U_SW, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 1, PHASE_HIGH);
+        inverter_phase_set(inv, 0, PHASE_OFF);
         break;
     case (3):
-        HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 0, PHASE_LOW);
+        inverter_phase_set(inv, 2, PHASE_OFF);
         break;
     case (4):
-        HAL_GPIO_WritePin(GPIO_PORT_W_SW, GPIO_PIN_W_SW, GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_W_NSD, GPIO_PIN_W_NSD, GPIO_PIN_RESET); // GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_V_SW, GPIO_PIN_V_SW, GPIO_PIN_RESET);
-        HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 2, PHASE_HIGH);
+        inverter_phase_set(inv, 1, PHASE_OFF);
         break;
     case (5):
-        HAL_GPIO_WritePin(GPIO_PORT_V_NSD, GPIO_PIN_V_NSD, GPIO_PIN_RESET);//GPIO_PIN_SET);
-        HAL_GPIO_WritePin(GPIO_PORT_U_NSD, GPIO_PIN_U_NSD, GPIO_PIN_RESET);
+        inverter_phase_set(inv, 2, PHASE_LOW);
+        inverter_phase_set(inv, 0, PHASE_OFF);
         break;
     }
-    period_counter++;
+    inv->state++;
 }
 
 
@@ -62,39 +75,3 @@ void regular_switching_cycle(void)
  * - No prescaler
  * - Counts till 2**16, so triggers an interrupt 1.365 ms after initialization
  */
-
-
-
-void test_switching_cycle(phase_t phase_u, phase_t phase_v, phase_t phase_w)
-{
-    printf(">");
-    static period_counter = 0;
-    period_counter %= 60;
-    switch (period_counter)
-    {
-        case (SW_TEST_1_HIGH):
-            phase_set(&phase_u, true);
-            break;
-        case (SW_TEST_2_HIGH):
-            phase_set(&phase_v, true);
-            break;
-        case (SW_TEST_3_HIGH):
-            phase_set(&phase_w, true);
-            break;
-        case (SW_TEST_1_LOW):
-            phase_set(&phase_u, false);
-            break;
-        case (SW_TEST_2_LOW):
-            phase_set(&phase_v, false);
-            break;
-        case (SW_TEST_3_LOW):
-            phase_set(&phase_w, false);
-            break;
-        default:
-            phase_unset(&phase_u);
-            phase_unset(&phase_v);
-            phase_unset(&phase_w);
-    }
-
-    period_counter++;
-}

@@ -19,10 +19,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "usb_device.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "inverter_control.h"
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -33,7 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+extern USBD_HandleTypeDef hUsbDeviceFS;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,26 +59,6 @@ static void MX_TIM8_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // TRY TO SWITCH A SINGLE PHASE AND SEE WHAT HAPPENS
-static phase_t phase_u = {
-    .sw_gpio_pin = GPIO_PIN_U_SW, 
-    .sw_gpio_port = GPIO_PORT_U_SW, 
-    .nsd_gpio_pin = GPIO_PIN_U_NSD,
-    .nsd_gpio_port = GPIO_PORT_U_NSD
-};
-
-static phase_t phase_v = {
-    .sw_gpio_pin = GPIO_PIN_V_SW, 
-    .sw_gpio_port = GPIO_PORT_V_SW, 
-    .nsd_gpio_pin = GPIO_PIN_V_NSD,
-    .nsd_gpio_port = GPIO_PORT_V_NSD
-};
-
-static phase_t phase_w = {
-    .sw_gpio_pin = GPIO_PIN_W_SW, 
-    .sw_gpio_port = GPIO_PORT_W_SW, 
-    .nsd_gpio_pin = GPIO_PIN_W_NSD,
-    .nsd_gpio_port = GPIO_PORT_W_NSD
-};
 /* USER CODE END 0 */
 
 /**
@@ -89,6 +69,21 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  // INIT INVERTER
+  phase_t phase_u = {
+    .sw_gpio_pin = GPIO_PIN_U_SW, .sw_gpio_port = GPIO_PORT_U_SW, 
+    .nsd_gpio_pin = GPIO_PIN_U_NSD, .nsd_gpio_port = GPIO_PORT_U_NSD
+  };
+  phase_t phase_v = {
+    .sw_gpio_pin = GPIO_PIN_V_SW, .sw_gpio_port = GPIO_PORT_V_SW, 
+    .nsd_gpio_pin = GPIO_PIN_V_NSD, .nsd_gpio_port = GPIO_PORT_V_NSD
+  };
+  phase_t phase_w = {
+    .sw_gpio_pin = GPIO_PIN_W_SW, .sw_gpio_port = GPIO_PORT_W_SW, 
+    .nsd_gpio_pin = GPIO_PIN_W_NSD, .nsd_gpio_port = GPIO_PORT_W_NSD
+  };
+  phase_t* phases[3] = {&phase_u, &phase_v, &phase_w};
+  inverter_t inverter = {0};
 
   /* USER CODE END 1 */
 
@@ -113,16 +108,21 @@ int main(void)
   MX_TIM8_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //! USB ENABLE DISCOVERY
+  
 
-
-  for (int i=0; i<2; i++)
+  for (int _=0; _<4; _++)
   {
-    printf("BLINK\r\n");
+    printf("BLINK,\r\n");
     HAL_Delay(2000);
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   }
   HAL_TIM_Base_Start_IT(&htim8);
+  if (inverter_init(&inverter, phases, 3))
+  {
+    printf("INVERTER INIT FAILED\r\n");
+    Error_Handler();
+  }
 
   /* USER CODE END 2 */
 
@@ -130,11 +130,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // THERE'S A PROBLEM WITH THIS FUNCTION
 
-    printf(".");
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     HAL_Delay(250);
+    inverter_phase_set(&inverter, 0, PHASE_LOW);
+    HAL_Delay(250);
+    inverter_phase_set(&inverter, 0, PHASE_OFF);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -265,7 +267,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7|GPIO_PIN_9, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7|GPIO_PIN_9|GPIO_PIN_10, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_4|GPIO_PIN_5
@@ -294,7 +296,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
+/* USER CODE BEGIN MX_GPIO_Init_2 */  /*Configure GPIO pins : PA7 PA9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 /* USER CODE END MX_GPIO_Init_2 */
 }
 

@@ -66,24 +66,21 @@ USBD_HandleTypeDef hUsbDeviceFS;
 
 int _write(int file, char *ptr, int len)
 {
-	int DataIdx;
-
-  // while (CDC_Transmit_FS((uint8_t*)ptr, len))
-  // {
-  //   continue;
-  // }
-  uint8_t result = CDC_Transmit_FS((uint8_t*)ptr, len);
-  if (result != USBD_OK)
+  int idx = 0;
+  while (CDC_Transmit_FS((uint8_t*)ptr, len))
   {
-    printf("!E! %u", result);
+    idx++;
+    HAL_Delay(1);
+    if (idx >= USB_CDC_TIMEOUT)
+    {
+      break;
+    }
   }
-	// for (DataIdx = 0; DataIdx < len; DataIdx++)
-	// {
-	// 	__io_putchar(*ptr++);
-	// }
+  // }
 	return len;
 }
 //! <<< PRINTF DECLARATION
+
 /* USER CODE END 1 */
 
 /**

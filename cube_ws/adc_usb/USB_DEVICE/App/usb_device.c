@@ -85,6 +85,8 @@ int _write(int file, char *ptr, int len)
 	return len;
 }
 //! <<< PRINTF DECLARATION
+
+
 /* USER CODE END 1 */
 
 /**

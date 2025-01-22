@@ -32,6 +32,7 @@
 #include "usbd_def.h"
 
 /* USER CODE BEGIN INCLUDE */
+#define USB_CDC_TIMEOUT  5 // in ms
 
 /* USER CODE END INCLUDE */
 
@@ -81,7 +82,7 @@ void MX_USB_DEVICE_Init(void);
  * -- Insert functions declaration here --
  */
 /* USER CODE BEGIN FD */
-
+void CDC_FlushBuffer(void);
 /* USER CODE END FD */
 /**
   * @}
