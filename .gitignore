@@ -1,8 +1,4 @@
-**.c.obj
-**.d.obj
-**.cache.dir
-**.elf
-**/CMakeCache.txt
+**/.vscode
 
 # cube_ws
 cube_ws/**/CMakeFiles/**
@@ -10,3 +6,4 @@ cube_ws/**/Makefile
 cube_ws/**/*.elf
 cube_ws/**/*.bin
 cube_ws/**/*.map
+cube_ws/**/CMakeCache.txt
