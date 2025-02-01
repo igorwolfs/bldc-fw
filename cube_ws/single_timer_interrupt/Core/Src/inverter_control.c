@@ -1,5 +1,6 @@
 #include "inverter_control.h"
 #include <stdio.h>
+
 // *************** PHASES ********************
 
 void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
@@ -35,9 +36,8 @@ int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count)
 }
 
 
-void inverter_switch(inverter_t *inv)
+void inverter_switch_regular(inverter_t *inv)
 {
-    printf(">");
     inv->state %= 6;
     switch(inv->state) 
     {
@@ -62,7 +62,7 @@ void inverter_switch(inverter_t *inv)
         inverter_phase_set(inv, 1, PHASE_OFF);
         break;
     case (5):
-        inverter_phase_set(inv, 2, PHASE_LOW);
+        inverter_phase_set(inv, 1, PHASE_LOW);
         inverter_phase_set(inv, 0, PHASE_OFF);
         break;
     }

@@ -59,6 +59,8 @@ static void MX_TIM8_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // TRY TO SWITCH A SINGLE PHASE AND SEE WHAT HAPPENS
+inverter_t inverter = {0}; //! EXTERN
+
 /* USER CODE END 0 */
 
 /**
@@ -83,7 +85,6 @@ int main(void)
     .nsd_gpio_pin = GPIO_PIN_W_NSD, .nsd_gpio_port = GPIO_PORT_W_NSD
   };
   phase_t* phases[3] = {&phase_u, &phase_v, &phase_w};
-  inverter_t inverter = {0};
 
   /* USER CODE END 1 */
 
@@ -115,39 +116,39 @@ int main(void)
   {
     printf("BLINK,\r\n");
     HAL_Delay(2000);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+    // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   }
-  HAL_TIM_Base_Start_IT(&htim8);
+
+  // Period is by default 2.5 ms
   if (inverter_init(&inverter, phases, 3))
   {
     printf("INVERTER INIT FAILED\r\n");
-    Error_Handler();
+    // Error_Handler();
   }
 
+  HAL_TIM_Base_Start_IT(&htim8);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+    // inverter_switch_regular(&inverter);
+    HAL_Delay(250);
+    // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
     HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-    HAL_Delay(250);
-    inverter_phase_set(&inverter, 0, PHASE_LOW);
-    HAL_Delay(250);
-    inverter_phase_set(&inverter, 0, PHASE_OFF);
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_TIM_Base_DeInit(&htim8);
+    // HAL_TIM_Base_DeInit(&htim8);
     htim8.Init.Period = 64000;
     // Make the counter count up to less than 65535 in order to trigger it more quickly
-    if (HAL_TIM_Base_Init(&htim8) != HAL_OK)
-    {
-      printf("<\r\n");
-      Error_Handler();
-    }
+    // if (HAL_TIM_Base_Start_IT(&htim8) != HAL_OK)
+    // {
+    //   printf("<\r\n");
+    // //   Error_Handler();
+    // }
   }
   /* USER CODE END 3 */
 }

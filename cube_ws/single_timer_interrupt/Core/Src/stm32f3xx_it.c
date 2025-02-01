@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "inverter_control.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,14 +62,13 @@
  * ITR5: V_SW low, V_NSD low, W_SW high, W_NSD high
  * ITR6: U_NSD low, V_NSD high
  */
-volatile int period_counter = 0;
-int gpio_toggle = 0;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
 extern TIM_HandleTypeDef htim8;
 /* USER CODE BEGIN EV */
+extern inverter_t inverter;
 
 /* USER CODE END EV */
 
@@ -230,8 +230,13 @@ void USB_LP_CAN_RX0_IRQHandler(void)
 void TIM8_UP_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
-  // regular_switching_cycle();
-  // test_switching_cycle();
+  //! MAKE SURE TO START THIS INTERRUPT ONLY AFTER THE INVERTER IS INITIALIZED
+  //! Whatever you put in here, make it short enough.
+  if (inverter.phases != NULL)
+  {
+    inverter_switch_regular(&inverter);
+  }
+  // inverter_switch(&inverter);
   /* USER CODE END TIM8_UP_IRQn 0 */
   HAL_TIM_IRQHandler(&htim8);
   /* USER CODE BEGIN TIM8_UP_IRQn 1 */

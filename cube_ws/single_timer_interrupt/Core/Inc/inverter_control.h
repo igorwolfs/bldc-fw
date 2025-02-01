@@ -66,7 +66,7 @@ typedef struct inverter
 
 int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count);
 void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state);
-void inverter_switch(inverter_t *inverter);
+void inverter_switch_regular(inverter_t *inverter);
 
 /**
  * TODO
