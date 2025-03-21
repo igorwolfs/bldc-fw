@@ -1,4 +1,4 @@
-# Configure
+# General Configurations
 ## Configure LED
 Configure GPIO pin 13 as output
 
