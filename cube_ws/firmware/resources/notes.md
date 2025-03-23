@@ -23,6 +23,7 @@ $STM32_PRG_PATH/STM32_Programmer_CLI -c port=swd mode=UR -e all
 Detect enough movement so the adc can detect movement and we can jump to the control step.
 
 This phase keeps running, the speed lock should probably store some historic data to see the back-emf sequence, and check if it's actually corresponding to a trapezoidal curve.
+
 ## Step 2: Speed lock
 **Concept**
 Simple sensorless control based on back-emfs.
@@ -41,3 +42,20 @@ Given the "approached" back emf (phase voltage - virtual ground), we know
 1. Sample the zero-crossing of the non-energised phase
 2. Wait half a step-period
 3. Switch to the next step
+
+
+# Speed
+## Timer speed
+- Timer is fed with a 48 MHz clock
+- Pole pair number: 4
+- Max timer count: 65535
+- Prescaler (settable)
+- 6 electrical steps
+
+Minimum mechanical speed becomes
+- switching_period = 65535 / (48e6) = 1.365 ms
+- mech_speed = 1/(1.365e-3 * 4 * 6) = 30.5 rps = 1830 rpm (which is too large)
+
+Choose an input clock of 6 MHz instead so the min starting rpm becomes 
+
+## 

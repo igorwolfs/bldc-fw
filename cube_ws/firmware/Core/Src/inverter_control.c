@@ -5,6 +5,7 @@
 
 void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
 {
+    inv->phases[phase]->state = state;
     switch (state)
     {
         case (PHASE_LOW):
@@ -20,7 +21,7 @@ void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
 
 // *************** INVERTER ********************
 
-int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count)
+int inverter_init(inverter_t *inv, phase_conf_t **phase_ptr, int phase_count)
 {
     // u, v, w -> 0, 1, 2
     for (int ph_i=0; ph_i<phase_count; ph_i++)
@@ -39,7 +40,7 @@ int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count)
 void inverter_switch_regular(inverter_t *inv)
 {
     inv->state %= 6;
-    switch(inv->state) 
+    switch(inv->state)
     {
     case (0):
         inverter_phase_set(inv, 0, PHASE_HIGH);
@@ -69,6 +70,17 @@ void inverter_switch_regular(inverter_t *inv)
     inv->state++;
 }
 
+enum phase inverter_get_inactive(inverter_t *inv)
+{
+    for (int i=0; i<INVERTER_N_PHASES; i++)
+    {
+        // HAL GPIO Get state -> if 
+        if (inv->phases[i]->state == PHASE_OFF)
+        {
+            return (enum phase)i;
+        }
+    }
+}
 
 /**
  * - Internal clock: 48 MHz

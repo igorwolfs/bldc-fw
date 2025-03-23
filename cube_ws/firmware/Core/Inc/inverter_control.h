@@ -41,32 +41,39 @@
 #define SW_TEST_3_LOW    55
 
 // *** PHASES ***
-typedef struct phase
-{
-    uint16_t sw_gpio_pin;
-    GPIO_TypeDef* sw_gpio_port;
-    uint16_t nsd_gpio_pin;
-    GPIO_TypeDef* nsd_gpio_port;
-} phase_t;
-
-
 enum phase_state {
     PHASE_LOW = 0,
     PHASE_HIGH = 1,
     PHASE_OFF
 };
 
+typedef struct phase_conf
+{
+    uint16_t sw_gpio_pin;
+    GPIO_TypeDef* sw_gpio_port;
+    uint16_t nsd_gpio_pin;
+    GPIO_TypeDef* nsd_gpio_port;
+    enum phase_state state;
+} phase_conf_t;
+
+enum phase {
+    PHASE_U=0,
+    PHASE_V=1,
+    PHASE_W=2
+};
+
 typedef struct inverter
 {
-    phase_t *phases[INVERTER_N_PHASES];
+    phase_conf_t *phases[INVERTER_N_PHASES];
     int state;
 } inverter_t;
 
 // *** INVERTER ***
 
-int inverter_init(inverter_t *inv, phase_t **phase_ptr, int phase_count);
+int inverter_init(inverter_t *inv, phase_conf_t **phase_ptr, int phase_count);
 void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state);
 void inverter_switch_regular(inverter_t *inverter);
+enum phase inverter_get_inactive(inverter_t *inv);
 
 /**
  * TODO

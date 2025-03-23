@@ -22,9 +22,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "inverter_control.h"
 #include <stdio.h>
 #include "adc_read.h"
+#include "inverter_control.h"
+#include "motor_control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -70,7 +71,7 @@ static void MX_TIM8_Init(void);
 /* USER CODE BEGIN 0 */
 // TRY TO SWITCH A SINGLE PHASE AND SEE WHAT HAPPENS
 inverter_t inverter = {0}; //! EXTERN
-
+volatile motor_control_t *cmotor; // 32-bit write to pcount should be atomic
 /* USER CODE END 0 */
 
 /**
@@ -82,19 +83,20 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
   // INIT INVERTER
-  phase_t phase_u = {
+  phase_conf_t phase_u = {
     .sw_gpio_pin = GPIO_PIN_U_SW, .sw_gpio_port = GPIO_PORT_U_SW, 
     .nsd_gpio_pin = GPIO_PIN_U_NSD, .nsd_gpio_port = GPIO_PORT_U_NSD
   };
-  phase_t phase_v = {
+  phase_conf_t phase_v = {
     .sw_gpio_pin = GPIO_PIN_V_SW, .sw_gpio_port = GPIO_PORT_V_SW, 
     .nsd_gpio_pin = GPIO_PIN_V_NSD, .nsd_gpio_port = GPIO_PORT_V_NSD
   };
-  phase_t phase_w = {
+  phase_conf_t phase_w = {
     .sw_gpio_pin = GPIO_PIN_W_SW, .sw_gpio_port = GPIO_PORT_W_SW, 
     .nsd_gpio_pin = GPIO_PIN_W_NSD, .nsd_gpio_port = GPIO_PORT_W_NSD
   };
-  phase_t* phases[3] = {&phase_u, &phase_v, &phase_w};
+
+  phase_conf_t* phases[3] = {&phase_u, &phase_v, &phase_w};
 
   /* USER CODE END 1 */
 
@@ -132,6 +134,8 @@ int main(void)
     HAL_Delay(2000);
     // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
   }
+
+  // *** MOTOR CONTROL INITIALIZATION ***
   printf("Inverter init\r\n");
   // Period is by default 2.5 ms
   if (inverter_init(&inverter, phases, 3))
@@ -140,30 +144,26 @@ int main(void)
     // Error_Handler();
   }
   
-  HAL_TIM_Base_Start_IT(&htim8);
+  if (inverter.phases == NULL)
+	{
+		return -1;
+	}
+  cmotor->inv = &inverter;
+
+  // *** TIMER INITIALIZATION ***
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  main_control(&inverter);
   while (1)
   {
-    // inverter_switch_regular(&inverter);
-    HAL_Delay(250);
-    // HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-    HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
-
+    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    // HAL_TIM_Base_DeInit(&htim8);
-    htim8.Init.Period = 64000;
-    // Make the counter count up to less than 65535 in order to trigger it more quickly
-    // if (HAL_TIM_Base_Start_IT(&htim8) != HAL_OK)
-    // {
-    //   printf("<\r\n");
-    // //   Error_Handler();
-    // }
   }
   /* USER CODE END 3 */
 }
@@ -200,7 +200,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
@@ -290,7 +290,7 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_TEMPSENSOR;
+  sConfig.Channel = ADC_CHANNEL_2;
   sConfig.Rank = ADC_REGULAR_RANK_3;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -299,7 +299,6 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_VREFINT;
   sConfig.Rank = ADC_REGULAR_RANK_4;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
@@ -546,7 +545,7 @@ static void MX_TIM8_Init(void)
 
   /* USER CODE END TIM8_Init 1 */
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 0;
+  htim8.Init.Prescaler = 127;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim8.Init.Period = 65535;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

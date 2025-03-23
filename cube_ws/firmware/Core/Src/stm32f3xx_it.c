@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "inverter_control.h"
+#include "motor_control.h"
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -69,6 +70,7 @@ extern PCD_HandleTypeDef hpcd_USB_FS;
 extern TIM_HandleTypeDef htim8;
 /* USER CODE BEGIN EV */
 extern inverter_t inverter;
+extern volatile motor_control_t *cmotor;
 
 /* USER CODE END EV */
 
@@ -232,9 +234,19 @@ void TIM8_UP_IRQHandler(void)
   /* USER CODE BEGIN TIM8_UP_IRQn 0 */
   //! MAKE SURE TO START THIS INTERRUPT ONLY AFTER THE INVERTER IS INITIALIZED
   //! Whatever you put in here, make it short enough.
-  if (inverter.phases != NULL)
+  // TRIGGER ADC MEASUREMENT
+  cmotor->adc_step %= MCONTROL_ADC_STEPS;
+  cmotor->adc_step++;
+  cmotor->adc_trigger = true;
+
+  // TRIGGER INVERTER SWITCH
+  if ((inverter.phases != NULL) && (cmotor->adc_step == MCONTROL_ADC_STEPS))
   {
     inverter_switch_regular(&inverter);
+    if (inverter.state == 6)
+    {
+      cmotor->ecycle_count++;
+    }
   }
   // inverter_switch(&inverter);
   /* USER CODE END TIM8_UP_IRQn 0 */
