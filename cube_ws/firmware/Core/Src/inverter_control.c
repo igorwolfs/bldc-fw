@@ -39,7 +39,6 @@ int inverter_init(inverter_t *inv, phase_conf_t **phase_ptr, int phase_count)
 
 void inverter_switch_regular(inverter_t *inv)
 {
-    inv->state %= 6;
     switch(inv->state)
     {
     case (0):
@@ -67,7 +66,8 @@ void inverter_switch_regular(inverter_t *inv)
         inverter_phase_set(inv, 0, PHASE_OFF);
         break;
     }
-    inv->state++;
+    //! WARNING: state must always be valid
+    inv->state = (inv->state >= 5) ? 0 : (inv->state + 1);
 }
 
 enum phase inverter_get_inactive(inverter_t *inv)
@@ -79,6 +79,15 @@ enum phase inverter_get_inactive(inverter_t *inv)
         {
             return (enum phase)i;
         }
+    }
+    if (inv->phases[0]->state == PHASE_OFF) {
+        return PHASE_U;
+    }
+    else if (inv->phases[1]->state == PHASE_OFF) {
+        return PHASE_V;
+    }
+    else {
+        return PHASE_W;
     }
 }
 

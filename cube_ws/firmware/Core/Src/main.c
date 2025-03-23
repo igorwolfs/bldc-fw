@@ -71,7 +71,8 @@ static void MX_TIM8_Init(void);
 /* USER CODE BEGIN 0 */
 // TRY TO SWITCH A SINGLE PHASE AND SEE WHAT HAPPENS
 inverter_t inverter = {0}; //! EXTERN
-volatile motor_control_t *cmotor; // 32-bit write to pcount should be atomic
+//! WARNING: make sure to protect this object through locking
+volatile motor_control_t cmotor = {0}; //! EXTERN
 /* USER CODE END 0 */
 
 /**
@@ -97,6 +98,8 @@ int main(void)
   };
 
   phase_conf_t* phases[3] = {&phase_u, &phase_v, &phase_w};
+  phase_read_t phase_u_data = {0}, phase_v_data = {0}, phase_w_data = {0};
+  phase_read_t* phase_data[3] = {&phase_u_data, &phase_v_data, &phase_w_data};
 
   /* USER CODE END 1 */
 
@@ -148,7 +151,8 @@ int main(void)
 	{
 		return -1;
 	}
-  cmotor->inv = &inverter;
+  cmotor.inv = &inverter;
+  mcontrol_init(&cmotor, phase_data, 3);
 
   // *** TIMER INITIALIZATION ***
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
@@ -157,7 +161,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  main_control(&inverter);
+  main_control(&cmotor);
   while (1)
   {
     

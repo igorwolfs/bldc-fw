@@ -1,6 +1,7 @@
-#include "adc_read.h"
 #include <stdint.h>
 #include <math.h>
+#include "adc_read.h"
+#include "main.h"
 
 
 #define TS_CAL1_ADDR       ((uint16_t*)0x1FFFF7B8) // Calibration value at 30°C
@@ -162,7 +163,7 @@ void adc4_processing(uint16_t *buff, int buffsize)
     // * Temperature calculation using thermistor
     //! Warn: the VDDA_ref here comes from the first adc, we should use the one that is used as input for adc3 and 4.
     float v_temp = VDDA_ref * ((float)((float)buff[1] / (float)0xfff));
-    printf("VTEMP: %.2f, %u, %u, %.2f\r\n", v_temp, buff[1], VDDA_ref);
+    printf("VTEMP: %.2f, %us, %.2f\r\n", v_temp, buff[1], VDDA_ref);
 
     // Current through primary resistor
     float th_ir1 = (VDDA_ref - v_temp) / THERMISTOR_R1;
@@ -181,9 +182,6 @@ void adc4_processing(uint16_t *buff, int buffsize)
 #define N_CONVERTS_ADC4  3
 void adc4_read(int ret_idx, float *ret)
 {
-    int adc_periph=4;
-    char* adc_naming[] = {"V_current", "TEMP", "VBAT"};
-
     uint16_t adc_buffer[N_CONVERTS_ADC4] = {0};
     if (HAL_ADC_Start(&hadc4) != HAL_OK)
     {
@@ -201,7 +199,8 @@ void adc4_read(int ret_idx, float *ret)
 
 
     *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff);
-
+    // int adc_periph=4;
+    // char* adc_naming[] = {"V_current", "TEMP", "VBAT"};
     // for (int i=0; i<N_CONVERTS_ADC4; i++)
     // {
     //     printf("ADC%d: %s: %u, ", adc_periph, adc_naming[i], adc_buffer[i]);

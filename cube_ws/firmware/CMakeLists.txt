@@ -50,6 +50,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/inverter_control.c
     Core/Src/motor_control.c
     Core/Src/phase_read.c
+    Core/Src/adc_read.c
 # Add user sources here
 )
 
