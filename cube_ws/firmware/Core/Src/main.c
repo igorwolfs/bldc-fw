@@ -65,6 +65,13 @@ static void MX_ADC3_Init(void);
 static void MX_TIM8_Init(void);
 /* USER CODE BEGIN PFP */
 
+void led_blink(void)
+{
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+      HAL_Delay(200);
+      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);
+      HAL_Delay(200);
+}
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -161,6 +168,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  printf("main\r\n");
   main_control(&cmotor);
   while (1)
   {

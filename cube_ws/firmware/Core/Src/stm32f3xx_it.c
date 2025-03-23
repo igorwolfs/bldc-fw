@@ -69,8 +69,7 @@
 extern PCD_HandleTypeDef hpcd_USB_FS;
 extern TIM_HandleTypeDef htim8;
 /* USER CODE BEGIN EV */
-extern inverter_t inverter;
-extern volatile motor_control_t *cmotor;
+extern volatile motor_control_t cmotor;
 
 /* USER CODE END EV */
 
@@ -235,17 +234,17 @@ void TIM8_UP_IRQHandler(void)
   //! MAKE SURE TO START THIS INTERRUPT ONLY AFTER THE INVERTER IS INITIALIZED
   //! Whatever you put in here, make it short enough.
   // TRIGGER ADC MEASUREMENT
-  cmotor->adc_step %= MCONTROL_ADC_STEPS;
-  cmotor->adc_step++;
-  cmotor->adc_trigger = true;
+  cmotor.adc_step %= MCONTROL_ADC_STEPS;
+  cmotor.adc_step++;
+  cmotor.adc_trigger = true;
 
   // TRIGGER INVERTER SWITCH
-  if ((inverter.phases != NULL) && (cmotor->adc_step == MCONTROL_ADC_STEPS))
+  if ((cmotor.inv->phases != NULL) && (cmotor.adc_step == MCONTROL_ADC_STEPS))
   {
-    inverter_switch_regular(&inverter);
-    if (inverter.state == 6)
+    inverter_switch_regular(cmotor.inv);
+    if (cmotor.inv->state == 0)
     {
-      cmotor->ecycle_count++;
+      cmotor.ecycle_count++;
     }
   }
   // inverter_switch(&inverter);

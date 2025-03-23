@@ -11,7 +11,7 @@
 #define MCONTROL_ADC_STEPS		8 	// ADC steps
 #define MCONTROL_ADC_STEP1		2 	// Step for first measurement
 #define MCONTROL_ADC_STEP2		6	// Step for second measurement (zero crossing)
-#define MCONTORL_TIMER_K 		930232.56 // [60 * TIMER_FREQ / (N_STEPS * NP * PRE)]
+#define MCONTROL_TIMER_K 		62500.0 // [60 * TIMER_FREQ / (N_STEPS * NP * PRE)]
 
 typedef struct phase_read {
 	union {

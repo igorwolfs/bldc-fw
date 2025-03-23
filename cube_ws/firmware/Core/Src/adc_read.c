@@ -44,7 +44,6 @@ static void adc_vref_update(uint16_t VDDA_ui16)
     volatile uint16_t vref_cal = *VREFINT_CAL_ADDR;
     //! WARN: make sure to divide the uint16's as floats.
     VDDA_ref = VREF *  ((float)((float)vref_cal / (float)VDDA_ui16));
-    printf("VDDA_ref: %.4f\r\n", VDDA_ref);
 }
 
 void adc1_read(int ret_idx, float *ret)

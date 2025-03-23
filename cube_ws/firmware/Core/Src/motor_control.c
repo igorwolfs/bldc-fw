@@ -19,23 +19,32 @@ CODE:
  */
 
 extern TIM_HandleTypeDef htim8;
-extern TIM_HandleTypeDef htim1;
 
 int main_control(motor_control_t *cmotor)
 {
+	printf("main_control\r\n");
+	
 	// IN RPM
-	float starting_speed = 14.0; // rpm
+	float starting_speed = 15.0; // rpm
 	float target_speed = 1200; // rpm
 	int n_steps = 100; // (1200.0-14.0) / 100
 	float stepsize = (target_speed-starting_speed) / (float) (n_steps);
 
 	// STARTUP LOOP
-	int step = 0;
+	int cycles_per_step = 100;
+	int step_i = 0, step = 0;
+	printf("loop start\r\n");
+	mcontrol_speed_set(cmotor, starting_speed);
 	while (1)
 	{
-		printf(".");
-		float set_speed = ((float)step) * stepsize + starting_speed;
-		mcontrol_speed_set(cmotor, set_speed);
+		if (step_i >= 100)
+		{
+			step_i = 0;
+			step++;
+			float set_speed = ((float)step) * stepsize + starting_speed;
+			printf("speed set: %d RPM", (int) roundf(set_speed));
+			mcontrol_speed_set(cmotor, set_speed);
+		}
 		// Step should be increased inside the interrupt
 		if (cmotor->adc_trigger)
 		{
@@ -43,11 +52,11 @@ int main_control(motor_control_t *cmotor)
 			enum phase ph_inactive = inverter_get_inactive(cmotor->inv);
 			mcontrol_read_phase(cmotor, ph_inactive);
 		}
-
-		if (cmotor->ecycle_count == MCONTROL_STABLE_CHECK)
+		if (cmotor->ecycle_count >= MCONTROL_STABLE_CHECK)
 		{
+			printf(".\r\n");
+			step_i++;
 			cmotor->ecycle_count = 0;
-			step++;
 			// Check the stability of the back-emf after MCONTROL_STABLE_CYCLES cycles
 			if (!mcontrol_stable_check(cmotor))
 			{
@@ -92,13 +101,14 @@ int mcontrol_stable_check(motor_control_t *cmotor) {
 	for (int i=0; i<(MCONTROL_STABLE_CHECK * MCONTROL_N_STEPS); i++)
 	{
 		// Check whether a zero-crossing occurs
-		if (cmotor->hist_arr[2*i] * cmotor->hist_arr[2*i+1] > 0)
+		if (cmotor->hist_arr[2*i] * cmotor->hist_arr[2*i+1] < 0)
 		{
 			return -1;
 		}
 	}
 	// Zero crossing occurs for all MCONTROL_STABLE_CHECK-cycles
-	return 0;
+	// return 0;
+	return -1;
 }
 
 
@@ -109,17 +119,18 @@ int mcontrol_speed_set(motor_control_t *cmotor, float rpm) {
 		HAL_TIM_Base_Start_IT(&htim8);
 		timer_init = true;
 	}
+
 	// *** MOTOR CONTORL SPEED SETTING
-	// mech_speed = (k_factor/(timer_period)) / 8 
-	float ptimer_cmotor_f = MCONTORL_TIMER_K / rpm;
-	if ((ptimer_cmotor_f > 65535) || (ptimer_cmotor_f < 1))
+	float ptimer_cmotor_f = (rpm / 60) * MCONTROL_TIMER_K;
+	if ((ptimer_cmotor_f > 65535.0) || (ptimer_cmotor_f < 1.0))
 	{
-		printf("Error, timer periods too large / too small");
+		printf("Error, timer periods too large / too small", rpm);
 		return -1;
 	}
 	uint16_t ptimer_ui16 = (uint16_t) roundf(ptimer_cmotor_f);
 	__HAL_TIM_SET_AUTORELOAD(&htim8, ptimer_ui16); // Set appropriate period
-	return -1;
+	// printf("RPM: %d\r\n", (int)roundf(rpm));
+	return 0;
 }
 
 /**
