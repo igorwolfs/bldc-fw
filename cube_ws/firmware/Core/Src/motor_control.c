@@ -22,25 +22,44 @@ extern TIM_HandleTypeDef htim8;
 
 int main_control(motor_control_t *cmotor)
 {
-	printf("main_control\r\n");
+	// *****************************
+	// WAIT FOR POWER
+	// *****************************
 	
-	// IN RPM
-	float starting_speed = 15.0; // rpm
+	// while (1)
+	// {
+	// 	float vbat;
+	// 	if (adc_read_vbat(&vbat) > 10.0)
+	// 	{
+	// 		break;
+	// 	}
+	// 	HAL_Delay(10);
+	// }
+
+	printf("main_control\r\n");
+	// **********************
+	// STARTER SETTINGS
+	// **********************
+	float starting_speed = 120.0; // rpm
 	float target_speed = 1200; // rpm
 	int n_steps = 100; // (1200.0-14.0) / 100
 	float stepsize = (target_speed-starting_speed) / (float) (n_steps);
 
 	// STARTUP LOOP
-	int cycles_per_step = 100;
 	int step_i = 0, step = 0;
 	printf("loop start\r\n");
 	mcontrol_speed_set(cmotor, starting_speed);
 	while (1)
 	{
-		if (step_i >= 100)
+		if (step_i >= 10)
 		{
 			step_i = 0;
 			step++;
+			//! TEMP FOR TESTING
+			if (step >= n_steps)
+			{
+				step = 0;
+			}
 			float set_speed = ((float)step) * stepsize + starting_speed;
 			printf("speed set: %d RPM", (int) roundf(set_speed));
 			mcontrol_speed_set(cmotor, set_speed);
@@ -121,7 +140,7 @@ int mcontrol_speed_set(motor_control_t *cmotor, float rpm) {
 	}
 
 	// *** MOTOR CONTORL SPEED SETTING
-	float ptimer_cmotor_f = (rpm / 60) * MCONTROL_TIMER_K;
+	float ptimer_cmotor_f = MCONTROL_K / rpm;
 	if ((ptimer_cmotor_f > 65535.0) || (ptimer_cmotor_f < 1.0))
 	{
 		printf("Error, timer periods too large / too small", rpm);
@@ -132,6 +151,7 @@ int mcontrol_speed_set(motor_control_t *cmotor, float rpm) {
 	// printf("RPM: %d\r\n", (int)roundf(rpm));
 	return 0;
 }
+
 
 /**
 ** TIMERS VS SLEEP / MAIN LOOP

@@ -4,14 +4,15 @@
 #include "inverter_control.h"
 #include <stdint.h>
 
-#define MCONTROL_STABLE_CHECK	10 	// Periods used for BEMF stability check
-#define MCONTROL_TIM_PRESCALER	128	
-#define MCONTROL_NP				4	
-#define MCONTROL_N_STEPS		6	
-#define MCONTROL_ADC_STEPS		8 	// ADC steps
+#define MCONTROL_BASE_F			48.0e6
+#define MCONTROL_STABLE_CHECK	(2*MCONTROL_N_STEPS) 	// 2 Periods used for BEMF stability check
+#define MCONTROL_TIM_PRESCALER	3	// Clock prescaler
+#define MCONTROL_NP				4 	// Number of electrical cycles for 1 mechanical cycle
+#define MCONTROL_N_STEPS		6	// Number of inverter switches for 1 electrical cycle
+#define MCONTROL_ADC_STEPS		8 	// Number of ADC steps for 1 inverter switch
 #define MCONTROL_ADC_STEP1		2 	// Step for first measurement
 #define MCONTROL_ADC_STEP2		6	// Step for second measurement (zero crossing)
-#define MCONTROL_TIMER_K 		62500.0 // [60 * TIMER_FREQ / (N_STEPS * NP * PRE)]
+#define MCONTROL_K				7500000.0
 
 typedef struct phase_read {
 	union {
