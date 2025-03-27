@@ -14,38 +14,41 @@
 } HAL_StatusTypeDef;
  */
 
+
+
+#define ADC4_TEMP_IDX   1
+#define ADC4_VBAT_IDX   2
+
+void adc_read_vbat(float *ret)
+{
+    adc4_read(ADC4_VBAT_IDX, ret);
+}
+
+
+void adc_read_temp(float *ret)
+{
+    adc4_read(ADC4_TEMP_IDX, ret);
+}
+
+
+/****
+ * ADCi_READ FUNCTIONS
+ * 
+ * 
+ * */
 /**
  * ADC1_CH2: gvirtual
  * ADC1_CH3: PhaseU_DIV
  * ADC1_VREF
  */
 
-static float VDDA_ref = -1;
-#define N_CONVERTS_ADC1  4
-
-extern ADC_HandleTypeDef hadc1;
-extern ADC_HandleTypeDef hadc2;
-extern ADC_HandleTypeDef hadc3;
-extern ADC_HandleTypeDef hadc4;
-
-#define ADC4_TEMP_IDX   1
-#define ADC4_VBAT_IDX   2
-
-__INLINE void adc_read_vbat(float *ret)
-{
-    adc4_read(ADC4_VBAT_IDX, ret);
-}
-
-
-__INLINE void adc_read_temp(float *ret)
-{
-    adc4_read(ADC4_TEMP_IDX, ret);
-}
-/****
- * ADCi_READ FUNCTIONS
- * 
- * 
- * */
+ static float VDDA_ref = -1;
+ #define N_CONVERTS_ADC1  4
+ 
+ extern ADC_HandleTypeDef hadc1;
+ extern ADC_HandleTypeDef hadc2;
+ extern ADC_HandleTypeDef hadc3;
+ extern ADC_HandleTypeDef hadc4;
 
 
 #define TS_CAL1_ADDR       ((uint16_t*)0x1FFFF7B8) // Calibration value at 30°C
@@ -212,6 +215,7 @@ void adc4_read(int ret_idx, float *ret)
         // Calculate the temperature based on the 2 resistors
         float T2_val_inv = 1/THERMISTOR_TCAL1 - logf(THERMISTOR_RBASE/thermistor_rnew) / THERMISTOR_B;
         float T2_val = 1/T2_val_inv - 273.15;
+        *ret = T2_val;
         break;
     default:
         *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff);

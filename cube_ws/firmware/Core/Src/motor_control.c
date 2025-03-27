@@ -1,5 +1,6 @@
 #include "motor_control.h"
 #include <math.h>
+#include "adc_read.h"
 /**
 TODO here
 Combine the functions from
@@ -28,12 +29,13 @@ int main_control(motor_control_t *cmotor)
 	
 	// while (1)
 	// {
-	// 	float vbat;
-	// 	if (adc_read_vbat(&vbat) > 10.0)
-	// 	{
+	// 	float vbat = 0.0;
+	// 	adc_read_vbat(&vbat);
+	// 	printf("VBAT: %d\r\n", (int)(vbat*1000.0));
+	// 	if (vbat > 10.0) {
 	// 		break;
 	// 	}
-	// 	HAL_Delay(10);
+	// 	HAL_Delay(1000);
 	// }
 
 	printf("main_control\r\n");

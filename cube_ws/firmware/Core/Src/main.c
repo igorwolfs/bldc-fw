@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <math.h>
 #include "adc_read.h"
 #include "inverter_control.h"
 #include "motor_control.h"
@@ -169,10 +170,17 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   printf("main\r\n");
+  float ret;
+  for (int i=0; i<5; i++)
+  {
+    adc_read_temp(&ret);
+    printf("TEMP: %d\r\n", (int)(roundf(ret*1000)));
+    printf("TEMP: %.2f\r\n", ret);
+    HAL_Delay(1000);
+  }
   main_control(&cmotor);
   while (1)
   {
-    
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
