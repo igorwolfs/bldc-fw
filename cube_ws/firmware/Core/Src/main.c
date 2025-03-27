@@ -171,11 +171,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   printf("main\r\n");
   float ret;
-  for (int i=0; i<5; i++)
+
+  while (1)
   {
     adc_read_temp(&ret);
-    printf("TEMP: %d\r\n", (int)(roundf(ret*1000)));
     printf("TEMP: %.2f\r\n", ret);
+    adc_read_vbat(&ret);
+    printf("VBAT: %.4f\r\n", ret);
+    adc_read_vphase_w(&ret);
+    printf("PHASE_W: %.4f\r\n", ret);
+    adc_read_vphase_v(&ret);
+    printf("PHASE_V: %.4f\r\n", ret);
+    adc_read_vphase_u(&ret);
+    printf("PHASE_U: %.4f\r\n", ret);
+    adc_read_vphase_n(&ret);
+    printf("PHASE_N: %.4f\r\n", ret);
     HAL_Delay(1000);
   }
   main_control(&cmotor);

@@ -115,8 +115,6 @@ int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int ph
 	return 0;
 }
 
-
-
 int mcontrol_stable_check(motor_control_t *cmotor) {
 
 	for (int i=0; i<(MCONTROL_STABLE_CHECK * MCONTROL_N_STEPS); i++)

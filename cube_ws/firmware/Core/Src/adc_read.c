@@ -15,26 +15,56 @@
  */
 
 
+// *** SYSTEM VOLTAGES ***
 
 #define ADC4_TEMP_IDX   1
 #define ADC4_VBAT_IDX   2
 
-void adc_read_vbat(float *ret)
-{
+void adc_read_vbat(float *ret) {
     adc4_read(ADC4_VBAT_IDX, ret);
 }
 
 
-void adc_read_temp(float *ret)
-{
+void adc_read_temp(float *ret) {
     adc4_read(ADC4_TEMP_IDX, ret);
 }
 
+// *** PHASE VOLTAGES ***
+#define VPHASE_U_ADC1_IDX	1
+#define VPHASE_V_ADC2_IDX	0
+#define VPHASE_W_ADC2_IDX	1
+#define VPHASE_N_ADC1_IDX	0
+
+void adc_read_vphase_u(float *ret) {
+    adc1_read(VPHASE_U_ADC1_IDX, ret);
+}
+void adc_read_vphase_v(float *ret) {
+    adc2_read(VPHASE_V_ADC2_IDX, ret);
+}
+void adc_read_vphase_w(float *ret) {
+    adc2_read(VPHASE_W_ADC2_IDX, ret);
+}
+void adc_read_vphase_n(float *ret) {
+    adc1_read(VPHASE_N_ADC1_IDX, ret);
+}
+
+// *** PHASE CURRENTS ***
+#define IPHASE_U_ADC3_IDX	0
+#define IPHASE_V_ADC4_IDX	0
+#define IPHASE_W_ADC2_IDX	2
+
+void adc_read_iphase_u(float *ret) {
+    adc3_read(IPHASE_U_ADC3_IDX, ret);
+}
+void adc_read_iphase_v(float *ret) {
+    adc4_read(IPHASE_V_ADC4_IDX, ret);
+}
+void adc_read_iphase_w(float *ret) {
+    adc2_read(IPHASE_W_ADC2_IDX, ret);
+}
 
 /****
  * ADCi_READ FUNCTIONS
- * 
- * 
  * */
 /**
  * ADC1_CH2: gvirtual
@@ -179,7 +209,7 @@ void adc3_read(int ret_idx, float *ret)
 #define THERMISTOR_R1   33.0 // kOhm
 
 // * Battery voltage
-#define BATTMEAS_RATIO 33.0/(330.0+33.0) // kOhm
+#define BATTMEAS_RATIO (33.0/(330.0+33.0)) // kOhm
 
 
 #define N_CONVERTS_ADC4  3
@@ -201,24 +231,26 @@ void adc4_read(int ret_idx, float *ret)
     HAL_ADC_Stop(&hadc4);
     switch (ret_idx)
     {
-    case ADC4_VBAT_IDX:
-        *ret = (((float)adc_buffer[ADC4_VBAT_IDX] / (float)0xfff) * VDDA_ref) / BATTMEAS_RATIO;
-        break;
-    case ADC4_TEMP_IDX:
-        // * Temperature calculation using thermistor
-        //! Warn: the VDDA_ref here comes from the first adc, we should use the one that is used as input for adc3 and 4.
-        float v_temp = VDDA_ref * ((float)((float)adc_buffer[1] / (float)0xfff));
-        // Current through primary resistor
-        float th_ir1 = (VDDA_ref - v_temp) / THERMISTOR_R1;
-        // Divide v_temp / current through primary
-        float thermistor_rnew = v_temp / th_ir1;
-        // Calculate the temperature based on the 2 resistors
-        float T2_val_inv = 1/THERMISTOR_TCAL1 - logf(THERMISTOR_RBASE/thermistor_rnew) / THERMISTOR_B;
-        float T2_val = 1/T2_val_inv - 273.15;
-        *ret = T2_val;
-        break;
-    default:
-        *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff);
+        case ADC4_VBAT_IDX:
+            float meas = VDDA_ref * ((float)((float)adc_buffer[ADC4_VBAT_IDX] / (float)0xfff));
+            *ret = VDDA_ref * ((float)adc_buffer[ADC4_VBAT_IDX] / (float)0xfff) / BATTMEAS_RATIO;
+            printf("meas: %.3f, ret: %.3f\r\n", meas, *ret);
+            break;
+        case ADC4_TEMP_IDX:
+            // * Temperature calculation using thermistor
+            //! Warn: the VDDA_ref here comes from the first adc, we should use the one that is used as input for adc3 and 4.
+            float v_temp = VDDA_ref * ((float)((float)adc_buffer[ADC4_TEMP_IDX] / (float)0xfff));
+            // Current through primary resistor
+            float th_ir1 = (VDDA_ref - v_temp) / THERMISTOR_R1;
+            // Divide v_temp / current through primary
+            float thermistor_rnew = v_temp / th_ir1;
+            // Calculate the temperature based on the 2 resistors
+            float T2_val_inv = 1/THERMISTOR_TCAL1 - logf(THERMISTOR_RBASE/thermistor_rnew) / THERMISTOR_B;
+            float T2_val = 1/T2_val_inv - 273.15;
+            *ret = T2_val;
+            break;
+        default:
+            *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff);
     }
     // int adc_periph=4;
     // char* adc_naming[] = {"V_current", "TEMP", "VBAT"};

@@ -11,5 +11,4 @@ void adc2_read(int ret_idx, float *ret);
 void adc3_read(int ret_idx, float *ret);
 void adc4_read(int ret_idx, float *ret);
 
-
 #endif
