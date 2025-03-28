@@ -1,4 +1,4 @@
-# Install script for directory: /home/iwolfs/Work/Projects/bldc_project/bldc-fw/cube_ws/adc_usb/cmake/stm32cubemx
+# Install script for directory: /home/iwolfs/Work/Projects/bldc_project/bldc-fw/cube_ws/modular_testcode/adc_usb/cmake/stm32cubemx
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

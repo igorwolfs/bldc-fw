@@ -14,16 +14,22 @@
 } HAL_StatusTypeDef;
  */
 
-#define ADC_DEBUG
+// #define ADC_DEBUG
 // *** SYSTEM VOLTAGES ***
 
 #define ADC4_TEMP_IDX   1
 #define ADC4_VBAT_IDX   2
+#define ADC1_VREF_IDX   2
+
+void adc_vref_read(void)
+{
+    float ret;
+    adc1_read(ADC1_VREF_IDX, &ret);
+}
 
 void adc_read_vbat(float *ret) {
     adc4_read(ADC4_VBAT_IDX, ret);
 }
-
 
 void adc_read_temp(float *ret) {
     adc4_read(ADC4_TEMP_IDX, ret);
@@ -73,7 +79,6 @@ void adc_read_iphase_w(float *ret) {
  */
 
  static float VDDA_ref = -1;
- #define N_CONVERTS_ADC1  4
  
  extern ADC_HandleTypeDef hadc1;
  extern ADC_HandleTypeDef hadc2;
@@ -82,19 +87,20 @@ void adc_read_iphase_w(float *ret) {
 
 // VOLTAGE MEASUREMENT CALIBRATION
 #define VPHASE_CALIB_FACTOR   (1.0 / 3.0)
-#define IPHASE_CALIB_FACTOR   (0.003 * 50.0) // R * GAIN
+#define IPHASE_CALIB_FACTOR   (0.003 * 50.0) 
+
 
 // TEMPERATURE CALIBRATION
-
 #define TS_CAL1_ADDR       ((uint16_t*)0x1FFFF7B8) // Calibration value at 30°C
 #define TS_CAL2_ADDR       ((uint16_t*)0x1FFFF7C2) // Calibration value at 110°C
 
 // * (0x1FFF F7BA, 0x1FFF F7BB)
 #define VREFINT_CAL_ADDR   ((uint16_t*)0x1FFFF7BA) // VREFINT calibration value
-#define VREF       3.3f   // VREF value (p. 381 user manual)
+#define VREF               3.3f   // VREF value (p. 381 user manual)
 #define TEMP30_CAL_DEG     30.0f  // Temperature at TS_CAL1
 #define TEMP110_CAL_DEG    110.0f // Temperature at TS_CAL2
 
+#define N_CONVERTS_ADC1  3
 
 static void adc_vref_update(uint16_t VDDA_ui16)
 {
@@ -122,22 +128,23 @@ void adc1_read(int ret_idx, float *ret)
     }
 
     HAL_ADC_Stop(&hadc1);
-    adc_vref_update(adc_buffer[3]);
+    adc_vref_update(adc_buffer[ADC1_VREF_IDX]);
     switch (ret_idx)
     {
         case VPHASE_U_ADC1_IDX: case VPHASE_N_ADC1_IDX:
             *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff) / VPHASE_CALIB_FACTOR;
-            break
+            break;
     }
     #ifdef ADC_DEBUG
-    char* adc_naming[] = {"gvirt", "U_div", "temp_int", "vref_int"};
+    char* adc_naming[] = {"gvirt", "U_div", "vref_int"};
     int adc_periph=1;
-    float fp_factor[] = {VPHASE_CALIB_FACTOR, VPHASE_CALIB_FACTOR, 1, 1};
+    float fp_factor[] = {VPHASE_CALIB_FACTOR, VPHASE_CALIB_FACTOR, 1};
     for (int i=0; i<N_CONVERTS_ADC1; i++)
     {
         float adc_fp = VDDA_ref * ((float)((float)adc_buffer[i]) / (float)0xfff) / fp_factor[i];
-        printf("ADC%d: %s: %u, %.2f", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
+        printf("ADC%d: %s: [%u, %.2f], ", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
     }
+    printf("VREF_INT: %.2f", VDDA_ref);
     printf("\r\n");
     #endif
 }
@@ -165,13 +172,13 @@ void adc2_read(int ret_idx, float *ret)
     }
 
     HAL_ADC_Stop(&hadc2);
-    switch  
+    switch (ret_idx)
     {
     case VPHASE_V_ADC2_IDX: case VPHASE_W_ADC2_IDX:
         *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff) / VPHASE_CALIB_FACTOR;
         break;
     case IPHASE_W_ADC2_IDX:
-        *ret = VDDA_ref * ((float)((float)adc_buffer[ret_idx]) / (float)0xfff) / IPHASE_CALIB_FACTOR;
+        *ret = VDDA_ref * ((float)((float)adc_buffer[IPHASE_W_ADC2_IDX]) / (float)0xfff) / IPHASE_CALIB_FACTOR;
         break;
     }
 
@@ -182,7 +189,7 @@ void adc2_read(int ret_idx, float *ret)
     for (int i=0; i<N_CONVERTS_ADC2; i++)
     {
         float adc_fp = VDDA_ref * ((float)((float)adc_buffer[i]) / (float)0xfff) / fp_factor[i];
-        printf("ADC%d: %s: %u, %.2f", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
+        printf("ADC%d: %s: [%u, %.2f], ", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
     }
     printf("\r\n");
     #endif
@@ -215,12 +222,12 @@ void adc3_read(int ret_idx, float *ret)
 
     #ifdef ADC_DEBUG
     char* adc_naming[] = {"U_current"};
-    float fp_factor[] = IPHASE_CALIB_FACTOR;
+    float fp_factor[] = {IPHASE_CALIB_FACTOR};
     int adc_periph=3;
     for (int i=0; i<N_CONVERTS_ADC3; i++)
     {
         float adc_fp = VDDA_ref * ((float)((float)adc_buffer[i]) / (float)0xfff) / fp_factor[i];
-        printf("ADC%d: %s: %u, %.2f", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
+        printf("ADC%d: %s: [%u, %.2f], ", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
     }
     printf("\r\n");
     #endif
@@ -263,7 +270,6 @@ void adc4_read(int ret_idx, float *ret)
     switch (ret_idx)
     {
         case ADC4_VBAT_IDX:
-            float meas = VDDA_ref * ((float)((float)adc_buffer[ADC4_VBAT_IDX] / (float)0xfff));
             *ret = VDDA_ref * ((float)adc_buffer[ADC4_VBAT_IDX] / (float)0xfff) / BATTMEAS_RATIO;
             // printf("meas: %.3f, ret: %.3f\r\n", meas, *ret);
             break;
@@ -291,7 +297,7 @@ void adc4_read(int ret_idx, float *ret)
     for (int i=0; i<N_CONVERTS_ADC4; i++)
     {
         float adc_fp = VDDA_ref * ((float)((float)adc_buffer[i]) / (float)0xfff) / fp_factor[i];
-        printf("ADC%d: %s: %u, %.2f", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
+        printf("ADC%d: %s: [%u, %.2f], ", adc_periph, adc_naming[i], adc_buffer[i], adc_fp);
     }
     printf("\r\n");
     #endif

@@ -13,6 +13,7 @@
 #define MCONTROL_ADC_STEP1		2 	// Step for first measurement
 #define MCONTROL_ADC_STEP2		6	// Step for second measurement (zero crossing)
 #define MCONTROL_K				7500000.0
+#define MCONTROL_VBAT_MIN		10.0
 
 typedef struct phase_read {
 	union {
@@ -44,10 +45,15 @@ typedef struct motor_control {
 } motor_control_t;
 
 
+
 int main_control(motor_control_t *cmotor);
 
 int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int phase_count);
 
+/**
+ * @brief: Used for initial motor alignment before startup.
+ */
+void mcontrol_align(motor_control_t *cmotor);
 /**
  *  @brief: Function performing startup by increasing the frequency from flow to fhigh
  */

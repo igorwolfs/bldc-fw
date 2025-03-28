@@ -32,6 +32,7 @@
 #include "usbd_def.h"
 
 /* USER CODE BEGIN INCLUDE */
+#define USB_CDC_TIMEOUT  5 // in ms
 
 /* USER CODE END INCLUDE */
 

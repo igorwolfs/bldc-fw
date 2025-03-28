@@ -37,34 +37,40 @@ int inverter_init(inverter_t *inv, phase_conf_t **phase_ptr, int phase_count)
 }
 
 
+int inverter_align(inverter_t *inv)
+{
+    inverter_phase_set(inv, 0, PHASE_HIGH);
+    inverter_phase_set(inv, 2, PHASE_OFF);
+}
+
 void inverter_switch_regular(inverter_t *inv)
 {
     switch(inv->state)
     {
-    case (0):
-        inverter_phase_set(inv, 0, PHASE_HIGH);
-        inverter_phase_set(inv, 2, PHASE_OFF);
-        break;
-    case (1):
-        inverter_phase_set(inv, 2, PHASE_LOW);
-        inverter_phase_set(inv, 1, PHASE_OFF);
-        break;
-    case (2):
-        inverter_phase_set(inv, 1, PHASE_HIGH);
-        inverter_phase_set(inv, 0, PHASE_OFF);
-        break;
-    case (3):
-        inverter_phase_set(inv, 0, PHASE_LOW);
-        inverter_phase_set(inv, 2, PHASE_OFF);
-        break;
-    case (4):
-        inverter_phase_set(inv, 2, PHASE_HIGH);
-        inverter_phase_set(inv, 1, PHASE_OFF);
-        break;
-    case (5):
-        inverter_phase_set(inv, 1, PHASE_LOW);
-        inverter_phase_set(inv, 0, PHASE_OFF);
-        break;
+        case (0):
+            inverter_phase_set(inv, 0, PHASE_HIGH);
+            inverter_phase_set(inv, 2, PHASE_OFF);
+            break;
+        case (1):
+            inverter_phase_set(inv, 2, PHASE_LOW);
+            inverter_phase_set(inv, 1, PHASE_OFF);
+            break;
+        case (2):
+            inverter_phase_set(inv, 1, PHASE_HIGH);
+            inverter_phase_set(inv, 0, PHASE_OFF);
+            break;
+        case (3):
+            inverter_phase_set(inv, 0, PHASE_LOW);
+            inverter_phase_set(inv, 2, PHASE_OFF);
+            break;
+        case (4):
+            inverter_phase_set(inv, 2, PHASE_HIGH);
+            inverter_phase_set(inv, 1, PHASE_OFF);
+            break;
+        case (5):
+            inverter_phase_set(inv, 1, PHASE_LOW);
+            inverter_phase_set(inv, 0, PHASE_OFF);
+            break;
     }
     //! WARNING: state must always be valid
     inv->state = (inv->state >= 5) ? 0 : (inv->state + 1);

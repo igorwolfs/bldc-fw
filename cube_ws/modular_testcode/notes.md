@@ -50,16 +50,10 @@ int _write(int file, char *ptr, int len)
 	return len;
 }
 ```
-Make sure to add to linkerscript:
+Make sure to your gcc-arm-none-eabi.cmake-file:
 ```c
-LDFLAGS += -u _printf_float
+set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -u _printf_float")
 ```
-
-Alternatively when using cmake add
-```cmake
-target_link_options(${CMAKE_PROJECT_NAME} PRIVATE -u _printf_float)
-```
-to your CMakeLists.txt
 
 ## Configure adc
 ### Pins

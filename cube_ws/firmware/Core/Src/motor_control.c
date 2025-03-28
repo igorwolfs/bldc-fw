@@ -19,6 +19,7 @@ CODE:
 
  */
 
+
 extern TIM_HandleTypeDef htim8;
 
 int main_control(motor_control_t *cmotor)
@@ -27,23 +28,25 @@ int main_control(motor_control_t *cmotor)
 	// WAIT FOR POWER
 	// *****************************
 	
-	// while (1)
-	// {
-	// 	float vbat = 0.0;
-	// 	adc_read_vbat(&vbat);
-	// 	printf("VBAT: %d\r\n", (int)(vbat*1000.0));
-	// 	if (vbat > 10.0) {
-	// 		break;
-	// 	}
-	// 	HAL_Delay(1000);
-	// }
+	while (1)
+	{
+		adc_vref_read();
+		float vbat = 0.0;
+		adc_read_vbat(&vbat);
+		printf("VBAT: %.2f\r\n", vbat);
+		if (vbat > MCONTROL_VBAT_MIN) {
+			printf("Control start\r\n");
+			break;
+		}
+		HAL_Delay(1000);
+	}
 
 	printf("main_control\r\n");
 	// **********************
 	// STARTER SETTINGS
 	// **********************
 	float starting_speed = 120.0; // rpm
-	float target_speed = 1200; // rpm
+	float target_speed = 120.0; // rpm
 	int n_steps = 100; // (1200.0-14.0) / 100
 	float stepsize = (target_speed-starting_speed) / (float) (n_steps);
 
@@ -51,6 +54,9 @@ int main_control(motor_control_t *cmotor)
 	int step_i = 0, step = 0;
 	printf("loop start\r\n");
 	mcontrol_speed_set(cmotor, starting_speed);
+
+	mcontrol_align(cmotor);
+
 	while (1)
 	{
 		if (step_i >= 10)
@@ -72,6 +78,12 @@ int main_control(motor_control_t *cmotor)
 			// Get non-energized phase, measure back-emf
 			enum phase ph_inactive = inverter_get_inactive(cmotor->inv);
 			mcontrol_read_phase(cmotor, ph_inactive);
+			printf("[(%d,%d),%.2f]", ph_inactive, cmotor->adc_step, cmotor->phase_data[ph_inactive]->emf);
+			if (cmotor->adc_step == (MCONTROL_ADC_STEPS-1))
+			{
+				printf("\r\n");
+			}
+			cmotor->adc_trigger = false;
 		}
 		if (cmotor->ecycle_count >= MCONTROL_STABLE_CHECK)
 		{
@@ -83,18 +95,29 @@ int main_control(motor_control_t *cmotor)
 			{
 				break; // Proceed to regular control loop
 			}
+			float vbat;
+			adc_read_vbat(&vbat);
+			if (vbat < MCONTROL_VBAT_MIN)
+			{
+				mcontrol_speed_set(cmotor, 0);
+				break;
+			}
 		}
 	}
 
 	// Control loop
-	while (1)
-	{
-		/**
-		 * Adapt period of next timeout depending on the adc-measurement instead of the other way around
-		 */
+	// while (1)
+	// {
+		// Adapt period of next timeout depending on the adc-measurement instead of the other way around
 		
-	}
+	// }
 	return 0;
+}
+
+void mcontrol_align(motor_control_t *cmotor)
+{
+	inverter_align(cmotor->inv);
+	HAL_Delay(250);
 }
 
 int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int phase_count)
@@ -116,7 +139,6 @@ int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int ph
 }
 
 int mcontrol_stable_check(motor_control_t *cmotor) {
-
 	for (int i=0; i<(MCONTROL_STABLE_CHECK * MCONTROL_N_STEPS); i++)
 	{
 		// Check whether a zero-crossing occurs
@@ -134,7 +156,12 @@ int mcontrol_stable_check(motor_control_t *cmotor) {
 int mcontrol_speed_set(motor_control_t *cmotor, float rpm) {
 
 	static int timer_init = false;
-	if (!timer_init) {
+	if (rpm == 0) {
+		HAL_TIM_Base_Stop_IT(&htim8);
+		timer_init = false;
+		return -1;
+	}
+	else if (!timer_init) {
 		HAL_TIM_Base_Start_IT(&htim8);
 		timer_init = true;
 	}
@@ -143,7 +170,7 @@ int mcontrol_speed_set(motor_control_t *cmotor, float rpm) {
 	float ptimer_cmotor_f = MCONTROL_K / rpm;
 	if ((ptimer_cmotor_f > 65535.0) || (ptimer_cmotor_f < 1.0))
 	{
-		printf("Error, timer periods too large / too small", rpm);
+		printf("Error, timer periods too large / too small %.2f", rpm);
 		return -1;
 	}
 	uint16_t ptimer_ui16 = (uint16_t) roundf(ptimer_cmotor_f);
