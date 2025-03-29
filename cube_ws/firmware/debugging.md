@@ -174,3 +174,19 @@ So (1 / 1e-6) = 1 MHz -> 1 us time
 ## Next steps
 - change the inverter_phase_set-function so
 	- The NSD port enables the PWM when necessary instead of simply setting a GPIO to ON
+
+Make sure in the PWM there is 
+- an nsd_pwm_start-function which calls
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); //<  Phase W  
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1); //<  Phase V 
+    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2); //<  Phase U (CH2N)
+
+- an nsd_pwm_stop-function which calls
+	HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+	HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+
+It seems like the PWM works, the ON-OFF functions needs to still be tested though
+### On/OFF testing
+- Set the pwm to 100 % everywhere
+- Zoom out in time to see where the bldc goes low

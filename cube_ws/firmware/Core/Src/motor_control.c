@@ -53,9 +53,9 @@ int main_control(motor_control_t *cmotor)
 	// STARTUP LOOP
 	int step_i = 0, step = 0;
 	printf("loop start\r\n");
-	mcontrol_speed_set(cmotor, starting_speed);
-
+	mcontrol_power_set(cmotor, 10);
 	mcontrol_align(cmotor);
+	mcontrol_speed_set(cmotor, starting_speed);
 
 	while (1)
 	{
@@ -112,6 +112,16 @@ int main_control(motor_control_t *cmotor)
 		
 	// }
 	return 0;
+}
+
+
+void mcontrol_power_set(motor_control_t *cmotor, uint8_t duty)
+{
+	uint8_t duty_limited =  (duty > 100) ? 100 : duty;
+	for (int ph_i=0; ph_i<INVERTER_N_PHASES; ph_i++)
+	{
+		cmotor->inv->phases[ph_i]->nsd_pwm_d(duty);
+	}
 }
 
 void mcontrol_align(motor_control_t *cmotor)

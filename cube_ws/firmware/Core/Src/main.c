@@ -100,15 +100,15 @@ int main(void)
   // INIT INVERTER
   phase_conf_t phase_u = {
     .sw_gpio_pin = GPIO_PIN_U_SW, .sw_gpio_port = GPIO_PORT_U_SW, 
-    .nsd_gpio_pin = GPIO_PIN_U_NSD, .nsd_gpio_port = GPIO_PORT_U_NSD
+    .nsd_pwm_start = inverter_nsd_pwm_u_start, .nsd_pwm_stop = inverter_nsd_pwm_u_stop, .nsd_pwm_d = inverter_nsd_pwm_u_d
   };
   phase_conf_t phase_v = {
     .sw_gpio_pin = GPIO_PIN_V_SW, .sw_gpio_port = GPIO_PORT_V_SW, 
-    .nsd_gpio_pin = GPIO_PIN_V_NSD, .nsd_gpio_port = GPIO_PORT_V_NSD
+    .nsd_pwm_start = inverter_nsd_pwm_v_start, .nsd_pwm_stop = inverter_nsd_pwm_v_stop, .nsd_pwm_d = inverter_nsd_pwm_v_d
   };
   phase_conf_t phase_w = {
     .sw_gpio_pin = GPIO_PIN_W_SW, .sw_gpio_port = GPIO_PORT_W_SW, 
-    .nsd_gpio_pin = GPIO_PIN_W_NSD, .nsd_gpio_port = GPIO_PORT_W_NSD
+    .nsd_pwm_start = inverter_nsd_pwm_w_start, .nsd_pwm_stop = inverter_nsd_pwm_w_stop, .nsd_pwm_d = inverter_nsd_pwm_w_d
   };
 
   phase_conf_t* phases[3] = {&phase_u, &phase_v, &phase_w};
@@ -189,18 +189,21 @@ int main(void)
 
   HAL_Delay(1000);
   // START PWM SIGNALS
-
-  // HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); //<  Phase W  
-  // HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1); //<  Phase V 
-  // HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2); //<  Phase U (CH2N)
-
+  int rpm = 30;
+  printf("Setting rpm: %d", rpm);
+  mcontrol_speed_set(&cmotor, rpm);
+  uint8_t power = 80;
+  mcontrol_power_set(&cmotor, power);
   while (1)
   {
-    printf("hi");
-    HAL_Delay(1000);
-    // HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); // Phase W
-    // HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2); // Phase V
-    // HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1); // Phase U
+    HAL_Delay(3000);
+    printf("Setting duty cycle: %u\r\n", power);
+    // mcontrol_power_set(&cmotor, power);
+    // power += 10;
+    // if (power >= 100)
+    // {
+    //   power = 0;
+    // }
     // HAL_Delay(1000);
     // main_control(&cmotor);
     /* USER CODE END WHILE */
@@ -779,7 +782,7 @@ static void MX_TIM8_Init(void)
 
   /* USER CODE END TIM8_Init 1 */
   htim8.Instance = TIM8;
-  htim8.Init.Prescaler = 1;
+  htim8.Init.Prescaler = 7;
   htim8.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim8.Init.Period = 65535;
   htim8.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

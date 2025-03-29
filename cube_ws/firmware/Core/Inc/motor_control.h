@@ -5,14 +5,14 @@
 #include <stdint.h>
 
 #define MCONTROL_BASE_F			48.0e6
-#define MCONTROL_STABLE_CHECK	(2*MCONTROL_N_STEPS) 	// 2 Periods used for BEMF stability check
-#define MCONTROL_TIM_PRESCALER	3	// Clock prescaler
+#define MCONTROL_STABLE_CHECK	(2 * MCONTROL_N_STEPS) 	// 2 Periods used for BEMF stability check
+#define MCONTROL_TIM_PRESCALER	7	// Clock prescaler
 #define MCONTROL_NP				4 	// Number of electrical cycles for 1 mechanical cycle
 #define MCONTROL_N_STEPS		6	// Number of inverter switches for 1 electrical cycle
 #define MCONTROL_ADC_STEPS		8 	// Number of ADC steps for 1 inverter switch
 #define MCONTROL_ADC_STEP1		2 	// Step for first measurement
 #define MCONTROL_ADC_STEP2		6	// Step for second measurement (zero crossing)
-#define MCONTROL_K				7500000.0
+#define MCONTROL_K				1875000.0
 #define MCONTROL_VBAT_MIN		10.0
 
 typedef struct phase_read {
@@ -50,6 +50,12 @@ int main_control(motor_control_t *cmotor);
 
 int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int phase_count);
 
+
+/**
+ * @brief: Used to set the PWM signal for the motor
+ */
+void mcontrol_power_set(motor_control_t *cmotor, uint8_t duty);
+
 /**
  * @brief: Used for initial motor alignment before startup.
  */
@@ -72,9 +78,7 @@ int mcontrol_stable_check(motor_control_t *cmotor);
 void mcontrol_sensorless(motor_control_t *cmotor);
 
 /**
- * @brief: Function calculating the pathway to a new speed and setting the new speed.
- * @note: TIM8 used for inverter switching: Initial period 65535, initial rpm: 14. 
- *		  TIM1 used for adc measurement 
+ * @brief: Enables inverter switching at a particular speed to enable the desired RPM
  */
 int mcontrol_speed_set(motor_control_t *cmotor, float rpm);
 

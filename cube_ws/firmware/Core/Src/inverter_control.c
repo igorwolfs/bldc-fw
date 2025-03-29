@@ -1,6 +1,10 @@
 #include "inverter_control.h"
 #include <stdio.h>
 
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim4;
+
 // *************** PHASES ********************
 
 void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
@@ -11,10 +15,10 @@ void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state)
         case (PHASE_LOW):
         case (PHASE_HIGH):
             HAL_GPIO_WritePin(inv->phases[phase]->sw_gpio_port, inv->phases[phase]->sw_gpio_pin, (int)state);
-            HAL_GPIO_WritePin(inv->phases[phase]->nsd_gpio_port, inv->phases[phase]->nsd_gpio_pin, GPIO_PIN_SET);
+            inv->phases[phase]->nsd_pwm_start();
             break;
         case (PHASE_OFF):
-           HAL_GPIO_WritePin(inv->phases[phase]->nsd_gpio_port, inv->phases[phase]->nsd_gpio_pin, GPIO_PIN_RESET);
+            inv->phases[phase]->nsd_pwm_stop();
             break;
     }
 }
@@ -43,12 +47,6 @@ int inverter_align(inverter_t *inv)
     inverter_phase_set(inv, 2, PHASE_OFF);
 }
 
-int inverter_pwm_set(inverter_t *duty_cycle)
-{
-    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); //<  Phase W  
-    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1); //<  Phase V 
-    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2); //<  Phase U (CH2N)
-}
 
 void inverter_switch_regular(inverter_t *inv)
 {
@@ -109,3 +107,42 @@ enum phase inverter_get_inactive(inverter_t *inv)
  * - No prescaler
  * - Counts till 2**16, so triggers an interrupt 1.365 ms after initialization
  */
+
+//! NSD FUNCTIONS
+// STOP 
+void inverter_nsd_pwm_w_stop(void) {
+    HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+}
+void inverter_nsd_pwm_v_stop(void) {
+    HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+}
+void inverter_nsd_pwm_u_stop(void) {
+    HAL_TIMEx_PWMN_Stop(&htim1, TIM_CHANNEL_2);
+}
+
+
+// ACTIVATION 
+void inverter_nsd_pwm_w_start(void) {
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+}
+void inverter_nsd_pwm_v_start(void) {
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+}
+void inverter_nsd_pwm_u_start(void) {
+    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+}
+
+
+// DUTY CYCLE SETTING
+void inverter_nsd_pwm_w_d(int duty_cycle)
+{
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (uint32_t)(duty_cycle*100));
+}
+void inverter_nsd_pwm_v_d(int duty_cycle)
+{
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (uint32_t)(duty_cycle*100));
+}
+void inverter_nsd_pwm_u_d(int duty_cycle)
+{
+    __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, (uint32_t)(duty_cycle*100));
+}

@@ -51,8 +51,9 @@ typedef struct phase_conf
 {
     uint16_t sw_gpio_pin;
     GPIO_TypeDef* sw_gpio_port;
-    uint16_t nsd_gpio_pin;
-    GPIO_TypeDef* nsd_gpio_port;
+    void (*nsd_pwm_start)(void);           //< pwm_start function
+    void (*nsd_pwm_stop)(void);            //< pwm_stop function
+    void (*nsd_pwm_d)(int duty_cycle);     //< pwm_duty cycle-set function
     enum phase_state state;
 } phase_conf_t;
 
@@ -76,6 +77,23 @@ void inverter_phase_set(inverter_t *inv, int phase, enum phase_state state);
 void inverter_switch_regular(inverter_t *inverter);
 enum phase inverter_get_inactive(inverter_t *inv);
 
+
+// NSD START
+void inverter_nsd_pwm_w_start(void);
+void inverter_nsd_pwm_v_start(void);
+void inverter_nsd_pwm_u_start(void);
+
+
+// NSD STOP 
+void inverter_nsd_pwm_w_stop(void);
+void inverter_nsd_pwm_v_stop(void);
+void inverter_nsd_pwm_u_stop(void);
+
+
+// DUTY CYCLE SETTING
+void inverter_nsd_pwm_w_d(int duty_cycle);
+void inverter_nsd_pwm_v_d(int duty_cycle);
+void inverter_nsd_pwm_u_d(int duty_cycle);
 /**
  * TODO
  * - Add phases with malloc so arbitrary number of phases can be added
