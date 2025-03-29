@@ -142,7 +142,35 @@ The phase switches on and off once every electrical cycle.
 	- Make sure to drive the signals here in PWM-fashion.
 	- There needs to be only 3 PWM signals, which enable the (SD)
 	- So PHASE_U_SD, PHASE_V_SD, PHASE_W_SD
-		- PHASE_U_SD: PB0
-		- PHASE_V_SD: PB6
-		- PHASE_W_SD: PB4
+		- PHASE_U_SD: PB0 (TIM4_CH1)
+		- PHASE_V_SD: PB6 (TIM1_CH2N)
+		- PHASE_W_SD: PB4 (TIM3_CH1)
 	- These ones should have a HF PWM signal which we should be able to start / stop and set the duty cycle of.
+
+#### Duty cycle choice
+At the moment, the PWM period is about 480 kHz when incrementing with an accuracy of 1 % (so counting period of 100).
+We could reduce this to an even smaller value  (4.8 MHz), but we have to also take into account the rise and fall times of the FET and driver.
+
+- Rise / fall time of driver: order of 1 us.
+	- IRFZ44N rise / fall time is negligible here
+
+So (1 / 1e-6) = 1 MHz -> 1 us time
+- So we should make sure the ON-time is at least 20 times 1 MHz (1000 / 20 = 50 kHz) = 20 us
+- Assume smallest duty cycle is 10 %
+- So the smallest period can be 20 * 10 = 200 us for switching, which is 5 kHz
+- Which at 48 MHz is 200e-6 / (1/48e6) = 9600 counts.
+
+- So make sure the minimum count is 10000 when switching, and take a duty cycle from that.
+
+**Comparison between switching frequency and fastest rotational inverter switching frequency**
+
+- Assume the fastest rotational frequency is 2000 rpm.
+- 2000 rpm (mech) ->/60:  33.33 rps
+- 33.33 rps (mech) ->*(4*6): 800 switches / second = 800 Hz 
+- 5 kHz / 800 = 6.25 cycles per switch. at the highest speed (which is not that good)
+
+-> Check how good it works and consider halving the 10 % duty cycle condition.
+
+## Next steps
+- change the inverter_phase_set-function so
+	- The NSD port enables the PWM when necessary instead of simply setting a GPIO to ON

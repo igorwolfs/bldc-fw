@@ -43,6 +43,13 @@ int inverter_align(inverter_t *inv)
     inverter_phase_set(inv, 2, PHASE_OFF);
 }
 
+int inverter_pwm_set(inverter_t *duty_cycle)
+{
+    HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1); //<  Phase W  
+    HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1); //<  Phase V 
+    HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2); //<  Phase U (CH2N)
+}
+
 void inverter_switch_regular(inverter_t *inv)
 {
     switch(inv->state)
