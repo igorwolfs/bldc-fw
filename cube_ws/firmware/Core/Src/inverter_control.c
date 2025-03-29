@@ -40,6 +40,14 @@ int inverter_init(inverter_t *inv, phase_conf_t **phase_ptr, int phase_count)
     return 0;
 }
 
+int inverter_reset(inverter_t *inv)
+{
+    for (int ph_i=0; ph_i<INVERTER_N_PHASES; ph_i++)
+    {
+        inverter_phase_set(inv, ph_i, PHASE_OFF);
+    }
+}
+
 
 int inverter_align(inverter_t *inv)
 {

@@ -28,35 +28,36 @@ int main_control(motor_control_t *cmotor)
 	// WAIT FOR POWER
 	// *****************************
 	
-	while (1)
-	{
-		adc_vref_read();
-		float vbat = 0.0;
-		adc_read_vbat(&vbat);
-		printf("VBAT: %.2f\r\n", vbat);
-		if (vbat > MCONTROL_VBAT_MIN) {
-			printf("Control start\r\n");
-			break;
-		}
-		HAL_Delay(1000);
-	}
+	// while (1)
+	// {
+	// 	adc_vref_read();
+	// 	float vbat = 0.0;
+	// 	adc_read_vbat(&vbat);
+	// 	printf("VBAT: %.2f\r\n", vbat);
+	// 	if (vbat > MCONTROL_VBAT_MIN) {
+	// 		printf("Control start\r\n");
+	// 		break;
+	// 	}
+	// 	HAL_Delay(1000);
+	// }
 
 	printf("main_control\r\n");
 	// **********************
 	// STARTER SETTINGS
 	// **********************
-	float starting_speed = 120.0; // rpm
-	float target_speed = 120.0; // rpm
+	float starting_speed = 30.0; // rpm
+	float target_speed = 30.0; // rpm
 	int n_steps = 100; // (1200.0-14.0) / 100
 	float stepsize = (target_speed-starting_speed) / (float) (n_steps);
 
 	// STARTUP LOOP
 	int step_i = 0, step = 0;
 	printf("loop start\r\n");
-	mcontrol_power_set(cmotor, 10);
-	mcontrol_align(cmotor);
+	mcontrol_power_set(cmotor, 30);
 	mcontrol_speed_set(cmotor, starting_speed);
+	// mcontrol_align(cmotor);
 
+	
 	while (1)
 	{
 		if (step_i >= 10)
@@ -97,11 +98,11 @@ int main_control(motor_control_t *cmotor)
 			}
 			float vbat;
 			adc_read_vbat(&vbat);
-			if (vbat < MCONTROL_VBAT_MIN)
-			{
-				mcontrol_speed_set(cmotor, 0);
-				break;
-			}
+			// if (vbat < MCONTROL_VBAT_MIN)
+			// {
+			// 	mcontrol_speed_set(cmotor, 0);
+			// 	break;
+			// }
 		}
 	}
 
@@ -140,7 +141,7 @@ int mcontrol_init(motor_control_t *cmotor, phase_read_t **phase_data_ptr, int ph
         }
         cmotor->phase_data[ph_i] = phase_data_ptr[ph_i];
     }
-	cmotor->control_type = SENSORLESS;
+	cmotor->control_type = FOC;
 	memset(&cmotor->hist_arr[0], 0, sizeof(cmotor->hist_arr));
 	cmotor->ecycle_count = 0;
 	cmotor->adc_step = 0;

@@ -190,3 +190,60 @@ It seems like the PWM works, the ON-OFF functions needs to still be tested thoug
 ### On/OFF testing
 - Set the pwm to 100 % everywhere
 - Zoom out in time to see where the bldc goes low
+
+This works perfectly
+
+### Running 
+Let's
+- run the motor at 30 rpm 
+- with a duty cycle of 10 %
+
+Let's check what happens with the motor in this case.
+
+There seem to be some issues. A few possibilities here include:
+- The PWM signal for the 2 enabled phases should be high at EXACTLY the same time in order to conduct through the right phases
+- At the moment this doesn't happen, and as a consequence the motor is simply not driven.
+
+**Check this by increasing the duty cycle to 30 %**
+
+- This should cause at least some overlap between phases.
+- Later fix the PWM so it aligns exactly.
+
+
+### Reset the counters each time so the PWM signal is aligned
+So each time when in inverter_control.c.
+
+run:
+1) Stop and configure timers if needed. 
+// For example, if they're already configured in PWM mode, just ensure they're stopped:
+HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_1);
+HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+
+2) Manually reset counters and force update
+// Disable counting while we reset them
+__HAL_TIM_DISABLE(&htim3);
+__HAL_TIM_DISABLE(&htim4);
+__HAL_TIM_DISABLE(&htim1);
+
+// Reset the counters to zero
+__HAL_TIM_SET_COUNTER(&htim3, 0);
+__HAL_TIM_SET_COUNTER(&htim4, 0);
+__HAL_TIM_SET_COUNTER(&htim1, 0);
+
+// Clear any pending update flags
+__HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
+__HAL_TIM_CLEAR_FLAG(&htim4, TIM_FLAG_UPDATE);
+__HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_UPDATE);
+
+// Generate an update event so that ARR/CCR and other registers are latched
+__HAL_TIM_GenerateEvent(&htim3, TIM_EVENTSOURCE_UPDATE);
+__HAL_TIM_GenerateEvent(&htim4, TIM_EVENTSOURCE_UPDATE);
+__HAL_TIM_GenerateEvent(&htim1, TIM_EVENTSOURCE_UPDATE);
+
+3) Start PWM channels in quick succession
+	- HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+	- HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+	- HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_2);
+
+**Where should we add this?**

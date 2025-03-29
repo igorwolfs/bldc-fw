@@ -189,15 +189,15 @@ int main(void)
 
   HAL_Delay(1000);
   // START PWM SIGNALS
-  int rpm = 30;
-  printf("Setting rpm: %d", rpm);
-  mcontrol_speed_set(&cmotor, rpm);
-  uint8_t power = 80;
-  mcontrol_power_set(&cmotor, power);
+  // int rpm = 30;
+  // printf("Setting rpm: %d", rpm);
+  // mcontrol_speed_set(&cmotor, rpm);
+  // uint8_t power = 80;
+  // mcontrol_power_set(&cmotor, power);
   while (1)
   {
-    HAL_Delay(3000);
-    printf("Setting duty cycle: %u\r\n", power);
+    // HAL_Delay(3000);
+    // printf("Setting duty cycle: %u\r\n", power);
     // mcontrol_power_set(&cmotor, power);
     // power += 10;
     // if (power >= 100)
@@ -205,7 +205,7 @@ int main(void)
     //   power = 0;
     // }
     // HAL_Delay(1000);
-    // main_control(&cmotor);
+    main_control(&cmotor);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
